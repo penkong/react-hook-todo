@@ -1,31 +1,25 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { link } from 'fs';
 
-
-
-class ResourceList extends Component {
-
-  state = { resources : [] };
-
-  async componentDidMount() {
-    const response = await axios.get(`https://jsonplaceholder.typicode.com/${this.props.resource}`)
-    this.setState({ resources : response.data });
+const ResourceList = ({ resource }) => {
+  const [resources, setResources ] = useState([]);
+  //useEffect as lifeCycle methods cdm and cdu
+  const fetchResource = async resource => {
+    const response = await axios.get(`https://jsonplaceholder.typicode.com/${resource}`)
+    setResources(response.data);
   }
-  
-  async componentDidUpdate(prevProps, prevState) {
-    if(prevProps.resource !== this.props.resource ) {
-      const response = await axios.get(`https://jsonplaceholder.typicode.com/${this.props.resource}`)
-      this.setState({ resources : response.data });
-    }
-  }
-
-  render() {
-    return (
-      <div>
-        {this.state.resources.length}
-      </div>
-    );
-  }
+  //this arr is like prevProps first check it if had change that http run
+  //if put no arr as sec func always call like spam
+  useEffect(()=> {fetchResource(resource)}, [resource]) //can user iiFe
+  return (
+    <ul>
+      {
+        resources.map(record =>
+          <li key={record.id}>{record.title}</li>)
+      }
+    </ul>
+  );
 }
 
 export default ResourceList;
